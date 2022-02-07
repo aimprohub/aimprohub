@@ -1,0 +1,118 @@
+{% extends "base.html" %} {% block content %}
+
+
+
+<div class="container-fluid">
+  
+        <div>
+            <p class="mainTextHeads">Selected Data:</p>
+            <ol class="d-flex justify-content-start">
+                <li class="list-item">Vender: <span id = "vendor-id">{{venderid}}</span></li>|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <li class="list-item">Department: <span id ="dept-id">{{deptid}}</span></li>
+            </ol>
+        </div>
+
+</div>
+
+    <form action="/equipment_details" method='post'>
+        <input type="hidden" id="vender" name="venderid" value={{venderid}}>
+        <input type="hidden" id="dept" name="deptid" value={{deptid}}>
+        <input type="hidden" id="equipmentid" name="equipmentid" value={{equipmentid}}>
+        <div class="table-responsive"> <span class="mainTextHeads">Select Equipment :</span>
+            <table id="example" class="table">
+                <thead>
+                    <tr>
+
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Model</th>
+                        <th>Make</th>
+                        <th>SerialNo</th>
+                        <th>Asset</th>
+                        <th>start_date</th>
+                        <th>Active</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td> <input type="hidden" id="vender" name="venderid" value={{venderid}}></td>
+                        <td> <input type="hidden" id="dept" name="deptid" value={{deptid}}></td>
+                        <td> <input type="hidden" id="equipmentid" name="equipmentid" value={{equipmentid}}></td>
+                    </tr>
+                </tbody>
+               
+
+              </table>
+            <div class="d-flex justify-content-start">
+                <button class="selectVendor mt-3" id="btnSelectedRows">Select Equipment <i class="fas fa-arrow-circle-right"></i></button><br>
+                <!-- <button class="btn selectVendor1 mt-3" name="Add equipmemnt" value="Add Equipment" button type="submit"
+                formaction="/add_equipment"> Add Equipment&nbsp;<i class="fas fa-arrow-circle-right"></i></button> -->
+              
+            </div>        
+        </div>
+    </form>
+    
+     
+
+    <script>
+        $(document).ready(function () {
+            var tableOne;
+            var baseurl = "/select_e?venderid={{venderid}}";
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("GET", baseurl, true);
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    var persons = JSON.parse(xmlhttp.responseText).result;
+                   
+                    tableOne = $("#example").DataTable({
+                       
+                        data: persons,
+                       
+                        columnDefs: [{
+                            orderable: false,
+                            className: 'select-input',
+                            targets: 0
+                        }],
+                        select: {
+                            style: 'os',
+                            selector: 'td:first-child',
+                        },
+                        order: [[1, 'asc']],
+
+
+                    });
+
+                }
+            };
+            
+            xmlhttp.send();
+            $('#btnSelectedRows').on('click', function () {
+               var data = tableOne.rows('.selected').data();
+              
+                if(data.length < 1)
+                   window.confirm("select row first")
+                   $.each(data, function (i, val) {
+                   tmpData = data[i];
+                   let vendor_id = document.getElementById("vendor-id").innerText;
+                   let dept_id = document.getElementById("dept-id").innerText;
+                   let equip_id = tmpData[0];
+                   console.log(equip_id)
+                   
+                   window.location.href = "/equipment_details?deptid=" + dept_id + "&venderid=" + vendor_id + "&equipmentid=" + equip_id;
+
+                });
+            });
+
+            $('#example tbody').on('click', 'td', function () {
+                var table = $('#example').DataTable();
+               $("#equipmentid").val(table.cell( this ).data());
+            });
+ 
+            
+        })    
+
+</script>
+
+
+</div>
+{% endblock %}
