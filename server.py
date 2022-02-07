@@ -221,7 +221,8 @@ def hosplist():
     equipid = request.args.get('equipment')
     print ("EQP=",equipid)
     cursor = mysql.connection.cursor()
-    cursor.execute("SELECT parameter_name FROM equ_parameter_reg where equ_parameter_id=%s",(equipid,))
+    #cursor.execute("SELECT parameter_name FROM equ_parameter_reg where equ_parameter_id=%s",(equipid,))
+    cursor.execute("SELECT parameter_name FROM parameter where equ_parameter_id=%s",(equipid,))
     data = cursor.fetchall()
     s = "-"
     for row in data:
@@ -521,7 +522,8 @@ def save_reading():
                 equ_parameter_id = row[1]
         
             # get parameter_names (list) in array defined from equ_parameter_id
-            cursor.execute('SELECT parameter_name FROM equ_parameter_reg where equ_parameter_id =%s',(equ_parameter_id,))
+            #cursor.execute('SELECT parameter_name FROM equ_parameter_reg where equ_parameter_id =%s',(equ_parameter_id,))
+            cursor.execute('SELECT parameter_name FROM parameter where equ_parameter_id =%s',(equ_parameter_id,))
             data = cursor.fetchall()
             for row in data:
                 parameter_name = row[0]
